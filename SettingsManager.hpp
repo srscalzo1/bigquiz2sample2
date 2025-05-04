@@ -9,6 +9,7 @@ class Observer;
 
 class SettingsManager {
 public:
+    // Static ensures only one is created
     static SettingsManager& getInstance();
 
     void setSetting(const std::string& key, const std::string& value);
@@ -17,6 +18,7 @@ public:
     void addObserver(Observer* observer);
 
 private:
+    // Pointer to implementation
     class Impl;
     std::unique_ptr<Impl> m_impl;
 

@@ -1,11 +1,23 @@
 #include "SettingsManager.hpp"
 #include "Observer.hpp"
 
-// TODO: Define struct Impl and implement singleton logic
+#include <map>
+#include <vector>
+#include <algorithm>
 
+// Internal implementation class
 class SettingsManager::Impl {
 public:
-    // TODO: Implement internal storage and observer list
+    std::map<std::string, std::string> settings;
+    std::vector<Observer*> observers;
+
+    void notifyObservers(const std::string& key, const std::string& value) {
+        for (auto* obs : observers) {
+            if (obs) {
+                obs->onSettingChanged(key, value);
+            }
+        }
+    }
 };
 
 SettingsManager::SettingsManager() : m_impl(new Impl()) {}
@@ -17,14 +29,17 @@ SettingsManager& SettingsManager::getInstance() {
 }
 
 void SettingsManager::setSetting(const std::string& key, const std::string& value) {
-    // TODO: Implement
+    m_impl->settings[key] = value;
+    m_impl->notifyObservers(key, value);
 }
 
 std::string SettingsManager::getSetting(const std::string& key) const {
-    // TODO: Implement
-    return "";
+    auto it = m_impl->settings.find(key);
+    return (it != m_impl->settings.end()) ? it->second : "";
 }
 
 void SettingsManager::addObserver(Observer* observer) {
-    // TODO: Implement
+    if (observer && std::find(m_impl->observers.begin(), m_impl->observers.end(), observer) == m_impl->observers.end()) {
+        m_impl->observers.push_back(observer);
+    }
 }
